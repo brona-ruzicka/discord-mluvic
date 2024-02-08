@@ -1,0 +1,21 @@
+{
+  "name": "discord-mluvic",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc && node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@discordjs/voice": "^0.16.1",
+    "discord.js": "^14.14.1",
+    "dotenv": "^16.4.1",
+    "libsodium-wrappers": "^0.7.13"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}
