@@ -1,8 +1,8 @@
-import { Client, Events, Partials } from "discord.js";
+import { Client, Events, Partials, Status } from "discord.js";
 import 'dotenv/config';
 
 
-import { VoiceConnection, joinVoiceChannel, createAudioPlayer, NoSubscriberBehavior, AudioResource, AudioPlayerStatus, createAudioResource } from "@discordjs/voice";
+import { VoiceConnection, joinVoiceChannel, createAudioPlayer, AudioResource, AudioPlayerStatus, createAudioResource, VoiceConnectionStatus } from "@discordjs/voice";
 
 
 const player = createAudioPlayer();
@@ -43,7 +43,6 @@ const bot = new Client({
 });
 
 bot.once(Events.ClientReady, () => {
-    bot.user?.setActivity("Running a test, hopefully.");
     console.log("Up and running.")
 });
 
@@ -95,6 +94,13 @@ async function handleConfigMessage(message: string) {
                     adapterCreator: channel.guild.voiceAdapterCreator,
                 });
                 connection.subscribe(player);
+                let this_connection = connection;
+                connection.on("stateChange", (_, newState) => {
+                    if (newState.status == VoiceConnectionStatus.Disconnected && connection == this_connection) {
+                        connection.destroy();
+                        connection == null;
+                    }
+                })
             }
 
             return true;
