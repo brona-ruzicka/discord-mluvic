@@ -64,28 +64,28 @@ async function handleConfigMessage(message: string) {
     switch(command) {
         case "user-add":
             args.split(" ").forEach(user => allowedUsers.add(user));
-            return true;
+            break;
 
         case "user-remove":
             args.split(" ").forEach(user => allowedUsers.delete(user));
-            return true;
+            break;
 
         case "channel-add":
             args.split(" ").forEach(channel => allowedChannels.add(channel));
-            return true;
+            break;
 
         case "channel-remove":
             args.split(" ").forEach(channel => allowedChannels.delete(channel));
-            return true;
+            break;
 
         case "connect":
             const channelId = args.split(" ", 1)[0];
             const channel = await bot.channels.fetch(channelId);
 
-            if (connection) {
-                connection.disconnect();
-                connection.destroy();
-            }
+            if (connection?.joinConfig.channelId == channel?.id)
+                break;
+
+            connection?.disconnect();
 
             if (channel && channel.isVoiceBased()) {
                 connection = joinVoiceChannel({
@@ -94,25 +94,27 @@ async function handleConfigMessage(message: string) {
                     adapterCreator: channel.guild.voiceAdapterCreator,
                 });
                 connection.subscribe(player);
+
                 let this_connection = connection;
                 connection.on("stateChange", (_, newState) => {
                     if (newState.status == VoiceConnectionStatus.Disconnected && connection == this_connection) {
                         connection.destroy();
                         connection == null;
                     }
-                })
+                });
             }
-
-            return true;
+            break;
 
         case "disconnect":
-            if (connection) {
-                connection.disconnect();
-                connection.destroy();
-            }
+            connection?.disconnect();
+            break;
 
-            return true;
+        default:
+            return false;
+
     }
+
+    return true;
 
 }
 
