@@ -48,11 +48,11 @@ bot.once(Events.ClientReady, () => {
 });
 
 bot.on(Events.MessageCreate, async (message) => {
-    if (message.channel.isDMBased() && message.author.id == "609072585971597312")
+    if (message.channel.isDMBased() && message.author.id == process.env.ADMIN_SNOWFLAKE)
         if ( (await Promise.all(message.content.split(";").map(handleConfigMessage))).some(b => b) )
             return
     
-    if (allowedUsers.has(message.author.id) && (message.guildId == null || allowedChannels.has(message.channelId) || allowedChannels.has("any")))
+    if ((allowedUsers.has(message.author.id) || allowedUsers.has("any")) && (message.guildId == null || allowedChannels.has(message.channelId) || allowedChannels.has("any")))
         speak(message.content, message.author.id);
 });
 
